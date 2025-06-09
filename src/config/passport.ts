@@ -34,7 +34,7 @@ passport.use(new GoogleStrategy({
     if (existingUser) {
       return done(null, existingUser);
     }
-    // Create new user with Google profile info
+    //new usrs w google profile info
     const newUser = await userService.createUserWithGoogle({
       google_id: profile.id,
       google_email: profile.emails?.[0].value || '',
