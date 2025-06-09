@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth 2.0 Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #4285f4;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #357abd;
+        }
+        .user-info {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OAuth 2.0 Test</h1>
+        <div id="loginSection">
+            <a href="http://localhost:3333/auth/google" class="btn">Login with Google</a>
+        </div>
+        <div id="userSection" class="user-info">
+            <img id="avatar" class="avatar" src="" alt="Profile picture">
+            <h2 id="userName"></h2>
+            <p id="userEmail"></p>
+            <button class="btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        // Check if we have a token in localStorage or error in URL
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            
+            if (error) {
+                alert('Authentication failed: ' + error);
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            if (token) {
+                displayUserInfo(JSON.parse(localStorage.getItem('user')));
+            }
+        }
+
+        // Function to handle the OAuth callback
+        function handleCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const user = urlParams.get('user');
+            
+            if (token && user) {
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', user);
+                displayUserInfo(JSON.parse(user));
+    
+                window.history.replaceState({}, document.title, '/');
+            }
+        }
+
+        // Display user information
+        function displayUserInfo(user) {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('userSection').style.display = 'block';
+            document.getElementById('avatar').src = user.google_photo_url || '';
+            document.getElementById('userName').textContent = `${user.first_name} ${user.last_name}`;
+            document.getElementById('userEmail').textContent = user.email;
+        }
+
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('userSection').style.display = 'none';
+        }
+
+        // Check for callback parameters when the page loads
+        handleCallback();
+    </script>
+</body>
+</html>

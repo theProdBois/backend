@@ -8,11 +8,8 @@ import {
   uuid, 
   pgEnum 
 } from "drizzle-orm/pg-core";
-
-// Create gender enum
 export const genderEnum = pgEnum('gender', ['M', 'F', 'other']);
 
-// Define the users table
 export const usersTable = pgTable("users", {
   id: uuid('id').primaryKey().defaultRandom(),
   email: varchar('email', { length: 100 }).notNull().unique(),
@@ -29,9 +26,13 @@ export const usersTable = pgTable("users", {
   email_verified_at: timestamp('email_verified_at'),
   last_login_at: timestamp('last_login_at'),
   created_at: timestamp('created_at').defaultNow(),
-  updated_at: timestamp('updated_at').defaultNow()
+  updated_at: timestamp('updated_at').defaultNow(),
+
+  google_id: varchar('google_id', { length: 255 }),
+  google_email: varchar('google_email', { length: 255 }),
+  google_display_name: varchar('google_display_name', { length: 255 }),
+  google_photo_url: varchar('google_photo_url', { length: 500 })
 });
 
-// Export types for TypeScript support
 export type User = typeof usersTable.$inferSelect;
 export type NewUser = typeof usersTable.$inferInsert;

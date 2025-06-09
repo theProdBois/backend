@@ -25,13 +25,13 @@ export class AuthController {
         profile_picture_url 
       } = req.body;
 
-      // Check if user already exists
+
       const existingUser = await this.userService.findByEmail(email);
       if (existingUser) {
         return res.status(400).json({ error: 'User already exists' });
       }
 
-      // Create new user
+
       const user = await this.userService.createUser({
         email,
         password,
@@ -44,7 +44,7 @@ export class AuthController {
         profile_picture_url
       });
 
-      // Generate JWT token
+
       const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
 
       res.status(201).json({

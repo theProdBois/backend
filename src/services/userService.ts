@@ -36,6 +36,45 @@ export class UserService {
     return user;
   }
 
+  async findById(id: string): Promise<User | undefined> {
+    const [user] = await this.db.select()
+      .from(usersTable)
+      .where(eq(usersTable.id, id));
+    return user;
+  }
+
+  async findByGoogleId(googleId: string): Promise<User | undefined> {
+    const [user] = await this.db.select()
+      .from(usersTable)
+      .where(eq(usersTable.google_id, googleId));
+    return user;
+  }
+
+  async createUserWithGoogle(userData: {
+    google_id: string;
+    google_email: string;
+    google_display_name: string;
+    google_photo_url?: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+  }): Promise<User> {
+    const newUser = {
+      ...userData,
+      password_hash: '', // Empty password for Google users
+      email_verified: true,
+      email_verified_at: new Date(),
+      created_at: new Date(),
+      updated_at: new Date()
+    };
+
+    const [user] = await this.db.insert(usersTable)
+      .values(newUser)
+      .returning();
+
+    return user;
+  }
+
   async verifyPassword(user: User, password: string): Promise<boolean> {
     return bcrypt.compare(password, user.password_hash);
   }

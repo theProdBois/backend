@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 const router = Router();
 
-// Middleware to verify JWT token
+
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -27,10 +27,9 @@ export const setupAuthRoutes = (authController: AuthController) => {
   // Register new user
   router.post('/register', authController.register);
 
-  // Login user
+
   router.post('/login', authController.login);
 
-  // Protected route example
   router.get('/me', authenticateToken, (req: Request, res: Response) => {
     res.json({ user: req.user });
   });
