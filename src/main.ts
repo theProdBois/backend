@@ -8,6 +8,10 @@ import { setupAuthRoutes } from './routes/authRoutes';
 import { setupGoogleAuthRoutes } from './routes/googleAuthRoutes';
 import passport from './config/passport';
 import session from 'express-session';
+import appRoutes from './routes/appRoutes';
+import developerRoutes from './routes/developerRoutes';
+import categoryRoutes from './routes/categoryRoutes';
+import appVersionRoutes from './routes/appVersionRoutes';
 
 const app = express();
 app.use(express.json());
@@ -15,7 +19,7 @@ app.use(expressStatic('public'));
 
 // Session middleware configuration
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-session-secret',
+  secret: process.env.SESSION_SECRET || 'default_secret_key',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -27,7 +31,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
@@ -37,10 +40,12 @@ const db = drizzle(pool);
 const userService = new UserService(db);
 const authController = new AuthController(userService);
 
-
 app.use('/auth', setupAuthRoutes(authController));
 app.use('/auth', setupGoogleAuthRoutes(db));
-
+app.use('/api', appRoutes);
+app.use('/api', developerRoutes);
+app.use('/api', categoryRoutes);
+app.use('/api', appVersionRoutes);
 
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);

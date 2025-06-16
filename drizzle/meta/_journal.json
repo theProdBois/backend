@@ -8,6 +8,13 @@
       "when": 1749289502641,
       "tag": "0000_round_tigra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1750071487576,
+      "tag": "0001_tricky_sandman",
+      "breakpoints": true
     }
   ]
 }
