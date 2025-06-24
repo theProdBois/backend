@@ -52,8 +52,13 @@ export const addApp = async (req: Request, res: Response) => {
 
 export const listAllApks = async (req: Request, res: Response) => {
   try {
-    const allApks = await db.select().from(appVersions);
-    res.json(allApks);
+    // Select all apps with their related versions (appVersions)
+    const allAppsWithVersions = await db.query.apps.findMany({
+      with: {
+        versions: true
+      }
+    });
+    res.json(allAppsWithVersions);
   } catch (error) {
     console.error('Error fetching APKs:', error);
     res.status(500).json({ error: 'Internal server error' });
